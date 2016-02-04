@@ -1,15 +1,50 @@
 package com.benwong.popularmovies1;
 
+import java.io.Serializable;
+
 /**
  * Created by benwong on 2016-02-03.
  */
-public class MovieItem {
+public class MovieItem implements Serializable{
+
+    private static final long serialVersionUID = 1L;
+
     private String mCaption;
     private String mId;
     private String mUrl;
+    private String plot;
+    private String rating;
+    private String release_date;
 
+    public String getPlot() {
+        return plot;
+    }
+
+    public void setPlot(String plot) {
+        this.plot = plot;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getRelease_date() {
+        return release_date;
+    }
+
+    public void setRelease_date(String release_date) {
+        this.release_date = release_date;
+    }
 
     private String mTitle;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
 
     @Override
     public String toString() {

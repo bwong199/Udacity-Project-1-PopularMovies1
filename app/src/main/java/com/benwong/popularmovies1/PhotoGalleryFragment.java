@@ -1,5 +1,6 @@
 package com.benwong.popularmovies1;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -91,8 +92,9 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 
-    private class PhotoHolder extends RecyclerView.ViewHolder {
+    private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView mItemImageView;
+        private MovieItem mMovieItem;
 
 
         public PhotoHolder(View itemView) {
@@ -100,10 +102,28 @@ public class PhotoGalleryFragment extends Fragment {
 
             mItemImageView = (ImageView) itemView
                     .findViewById(R.id.fragment_photo_gallery_image_view);
+            itemView.setOnClickListener(this);
         }
 
         public void bindDrawable(Drawable drawable) {
             mItemImageView.setImageDrawable(drawable);
+        }
+
+        public void bindMovieItem(MovieItem movieItem){
+            mMovieItem = movieItem;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), ViewPhotoDetailsActivity.class);
+            intent.putExtra("Movie Title", mMovieItem.getCaption());
+            intent.putExtra("Movie Poster", mMovieItem.getUrl());
+
+//            Bundle bundle = new Bundle();
+//            bundle.putString("Movie Caption", mMovieItem.getCaption());
+
+
+            startActivity(intent);
         }
     }
 
@@ -125,9 +145,9 @@ public class PhotoGalleryFragment extends Fragment {
         @Override
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
             MovieItem movieItem = mMovieItems.get(position);
-
-            Log.i("movieItem", String.valueOf(movieItem.getCaption()));
-            Log.i("movieItem", String.valueOf(movieItem.getUrl()));
+            photoHolder.bindMovieItem(movieItem);
+//            Log.i("movieItem", String.valueOf(movieItem.getCaption()));
+//            Log.i("movieItem", String.valueOf(movieItem.getUrl()));
 
             Drawable placeholder = getResources().getDrawable(R.drawable.bill_up_close);
             photoHolder.bindDrawable(placeholder);

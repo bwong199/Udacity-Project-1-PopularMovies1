@@ -118,6 +118,9 @@ public class PhotoGalleryFragment extends Fragment {
             Intent intent = new Intent(getActivity(), ViewPhotoDetailsActivity.class);
             intent.putExtra("Movie Title", mMovieItem.getCaption());
             intent.putExtra("Movie Poster", mMovieItem.getUrl());
+            intent.putExtra("Movie Plot", mMovieItem.getPlot());
+            intent.putExtra("Movie Rating", mMovieItem.getRating());
+            intent.putExtra("Release Date", mMovieItem.getRelease_date());
 
 //            Bundle bundle = new Bundle();
 //            bundle.putString("Movie Caption", mMovieItem.getCaption());

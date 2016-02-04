@@ -66,7 +66,7 @@ public class ThumbnailDownloader<T> extends HandlerThread{
             byte[] bitmapBytes = new MovieFetchr().getUrlBytes(url);
             final Bitmap bitmap = BitmapFactory
                     .decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
-            Log.i(TAG, "Bitmap created");
+//            Log.i(TAG, "Bitmap created");
 
             mResponseHandler.post(new Runnable() {
                 public void run() {
@@ -84,7 +84,7 @@ public class ThumbnailDownloader<T> extends HandlerThread{
     }
 
     public void queueThumbnail(T target, String url) {
-        Log.i(TAG, "Got a URL: " + url);
+//        Log.i(TAG, "Got a URL: " + url);
 
         if (url == null) {
             mRequestMap.remove(target);

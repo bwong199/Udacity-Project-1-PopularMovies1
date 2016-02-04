@@ -12,6 +12,9 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity {
 
     TextView movieCaption;
     ImageView moviePoster;
+    TextView movieRating;
+    TextView moviePlot;
+    TextView movieReleaseDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +36,20 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity {
 
         String caption = intent.getStringExtra("Movie Title");
         String url = intent.getStringExtra("Movie Poster");
+        String plot = intent.getStringExtra("Movie Plot");
+        Double rating = intent.getDoubleExtra("Movie Rating", 0);
+        String releaseDate = intent.getStringExtra("Release Date");
 
         movieCaption = (TextView)findViewById(R.id.movieCaption);
         moviePoster = (ImageView)findViewById(R.id.moviePoster);
+        movieRating = (TextView)findViewById(R.id.movieRating);
+        moviePlot = (TextView)findViewById(R.id.moviePlot);
+        movieReleaseDate = (TextView)findViewById(R.id.releaseDate);
 
         movieCaption.setText(caption);
+        moviePlot.setText(plot);
+        movieRating.setText(String.valueOf("Average rating - " + rating));
+        movieReleaseDate.setText("Released " + releaseDate);
         Picasso.with(this).load(url).into(moviePoster);
 
 

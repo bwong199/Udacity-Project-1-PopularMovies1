@@ -13,7 +13,7 @@ public class MovieItem implements Serializable{
     private String mId;
     private String mUrl;
     private String plot;
-    private String rating;
+    private Double rating;
     private String release_date;
 
     public String getPlot() {
@@ -24,11 +24,11 @@ public class MovieItem implements Serializable{
         this.plot = plot;
     }
 
-    public String getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 

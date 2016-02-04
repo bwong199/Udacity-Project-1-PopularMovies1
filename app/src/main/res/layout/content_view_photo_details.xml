@@ -13,11 +13,11 @@
     tools:context="com.benwong.popularmovies1.ViewPhotoDetailsActivity"
     tools:showIn="@layout/activity_view_photo_details">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        >
+        android:background="#030000">
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -30,14 +30,14 @@
 
             >
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical" android:background="#050000">
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent" android:background="#cbe3f1">
 
                     <TextView
                         android:id="@+id/movieCaption"
@@ -46,44 +46,46 @@
                         android:layout_gravity="right|top"
                         android:paddingTop="8dp"
                         android:textColor="#020000"
-                        android:textSize="20dp" android:textStyle="bold"
+                        android:textSize="15dp" android:textStyle="bold"
                         android:textAlignment="center"/>
                     <ImageView
                         android:id="@+id/moviePoster"
                         android:layout_width="112dp"
                         android:layout_height="187dp"
                         android:layout_gravity="left|top"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:layout_marginTop="50dp"
+                        android:layout_marginTop="70dp"
                         android:scaleType="fitXY"
                         android:layout_marginBottom="10dp"/>
+                    <TextView
+                        android:id="@+id/moviePlot"
+                        android:layout_width="192dp"
+                        android:layout_height="373dp"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Small Text"
+                        android:layout_gravity="right|top" android:layout_marginTop="70dp"
+                        android:layout_marginRight="10dp" android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="10dp"/>
+                    <TextView
+                        android:layout_width="139dp"
+                        android:layout_height="56dp"
+                        android:text="Small Text"
+                        android:id="@+id/releaseDate" android:layout_gravity="left|center_vertical"
+                        android:layout_marginLeft="10dp" android:layout_marginTop="10dp"
+                        android:textSize="12dp"/>
+                    <TextView android:id="@+id/movieRating" android:layout_width="fill_parent"
+                              android:layout_height="wrap_content"
+                              android:layout_gravity="center_horizontal|top" android:paddingTop="8dp"
+                              android:textColor="#020000" android:textSize="13dp"
+                              android:textStyle="bold" android:textAlignment="center"
+                              android:layout_marginTop="30dp"/>
                 </FrameLayout>
 
-                <TextView
-                    android:id="@+id/photo_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/flickrPrimaryTextColor"
-                    android:textSize="14sp"/>
-
-                <TextView
-                    android:id="@+id/photo_tags"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/flickrPrimaryTextColor"
-                    android:textSize="10sp"/>
-
-            </LinearLayout>
+            </RelativeLayout>
 
         </android.support.v7.widget.CardView>
 
 
-    </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

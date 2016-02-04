@@ -107,13 +107,19 @@ public class MovieFetchr {
 //            if (!photoJsonObject.has("url_s")) {
 //                continue;
 //            }
+            item.setRating(photoJsonObject.getDouble("vote_average"));
+            item.setPlot(photoJsonObject.getString("overview"));
+            item.setRelease_date(photoJsonObject.getString("release_date"));
+
+
             item.setUrl("https://image.tmdb.org/t/p/w92/" + photoJsonObject.getString("poster_path"));
 //            item.setOwner(photoJsonObject.getString("owner"));
 
             items.add(item);
-//            Log.i("MovieItemTitle", String.valueOf(items.get(i).getCaption()));
+            Log.i("MovieItemTitle", String.valueOf(items.get(i).getCaption()));
 //            Log.i("MovieItemID", String.valueOf(items.get(i).getId()));
 //            Log.i("MovieItemURL", String.valueOf(items.get(i).getUrl()));
+//            Log.i("MovieRating", String.valueOf(items.get(i).getRelease_date()));
 
         }
     }

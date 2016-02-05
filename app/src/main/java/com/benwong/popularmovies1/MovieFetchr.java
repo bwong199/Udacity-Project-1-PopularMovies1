@@ -53,12 +53,12 @@ public class MovieFetchr {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public List<MovieItem> fetchItems() {
+    public List<MovieItem> fetchItems(String argument) {
 
         List<MovieItem> items = new ArrayList<>();
 
         try {
-            String url = Uri.parse("https://api.themoviedb.org/3/movie/popular")
+            String url = Uri.parse("https://api.themoviedb.org/3/movie/"+argument)
                     .buildUpon()
                     .appendQueryParameter("api_key", API_KEY)
 
@@ -116,7 +116,7 @@ public class MovieFetchr {
 //            item.setOwner(photoJsonObject.getString("owner"));
 
             items.add(item);
-            Log.i("MovieItemTitle", String.valueOf(items.get(i).getCaption()));
+//            Log.i("MovieItemTitle", String.valueOf(items.get(i).getCaption()));
 //            Log.i("MovieItemID", String.valueOf(items.get(i).getId()));
 //            Log.i("MovieItemURL", String.valueOf(items.get(i).getUrl()));
 //            Log.i("MovieRating", String.valueOf(items.get(i).getRelease_date()));

@@ -29,6 +29,8 @@ public class PhotoGalleryFragment extends Fragment {
     private RecyclerView mPhotoRecyclerView;
     private List<MovieItem> mItems = new ArrayList<>();
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
+    private PhotoAdapter mAdapter;
+
 
 
     public static PhotoGalleryFragment newInstance() {
@@ -39,8 +41,8 @@ public class PhotoGalleryFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        new FetchItemsTask().execute();
-
+//        updateItems("popular");
+        new FetchItemsTask("popular").execute();
         Handler responseHandler = new Handler();
         mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
         mThumbnailDownloader.setThumbnailDownloadListener(
@@ -66,6 +68,8 @@ public class PhotoGalleryFragment extends Fragment {
         mPhotoRecyclerView = (RecyclerView) v
                 .findViewById(R.id.fragment_photo_gallery_recycler_view);
         mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 5));
+        mAdapter = new PhotoAdapter(mItems);
+        mPhotoRecyclerView.setAdapter(mAdapter);
 
 
         setupAdapter();
@@ -87,11 +91,23 @@ public class PhotoGalleryFragment extends Fragment {
     }
 
     private void setupAdapter() {
-        if (isAdded()) {
-            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
-        }
-    }
 
+//        if (isAdded()) {
+//            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
+//
+//        } else {
+//            mAdapter.notifyDataSetChanged();
+//        }
+//        if (isAdded()) {
+//            mAdapter.notifyDataSetChanged();
+//        }
+
+    }
+    void updateItems(String query){
+        mItems.clear();
+        new FetchItemsTask(query).execute();
+//        mPhotoRecyclerView.getAdapter().notifyDataSetChanged();
+    }
     private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView mItemImageView;
         private MovieItem mMovieItem;
@@ -121,11 +137,6 @@ public class PhotoGalleryFragment extends Fragment {
             intent.putExtra("Movie Plot", mMovieItem.getPlot());
             intent.putExtra("Movie Rating", mMovieItem.getRating());
             intent.putExtra("Release Date", mMovieItem.getRelease_date());
-
-//            Bundle bundle = new Bundle();
-//            bundle.putString("Movie Caption", mMovieItem.getCaption());
-
-
             startActivity(intent);
         }
     }
@@ -149,9 +160,6 @@ public class PhotoGalleryFragment extends Fragment {
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
             MovieItem movieItem = mMovieItems.get(position);
             photoHolder.bindMovieItem(movieItem);
-//            Log.i("movieItem", String.valueOf(movieItem.getCaption()));
-//            Log.i("movieItem", String.valueOf(movieItem.getUrl()));
-
             Drawable placeholder = getResources().getDrawable(R.drawable.bill_up_close);
             photoHolder.bindDrawable(placeholder);
             mThumbnailDownloader.queueThumbnail(photoHolder, movieItem.getUrl());
@@ -161,26 +169,33 @@ public class PhotoGalleryFragment extends Fragment {
         public int getItemCount() {
             return mMovieItems.size();
         }
+
     }
 
-    private class FetchItemsTask extends AsyncTask<Void,Void,List<MovieItem>> {
+    public  class FetchItemsTask extends AsyncTask<Void,Void,List<MovieItem>> {
+        private String mQuery;
+        public FetchItemsTask(String query) {
+            mQuery = query;
+        }
 
         @Override
         protected List<MovieItem> doInBackground(Void... params) {
-            return new MovieFetchr().fetchItems();
+            return new MovieFetchr().fetchItems(mQuery);
         }
 
         @Override
         protected void onPostExecute(List<MovieItem> items) {
             mItems = items;
             for (int i = 0; i < mItems.size(); i++) {
-//
-//                Log.i("MovieInGalleryFragment", mItems.get(i).getId());
-//                Log.i("MovieInGalleryFragment", mItems.get(i).getTitle());
+                Log.i("MovieInGalleryFragment", mItems.get(i).getCaption());
             }
+
             setupAdapter();
+
         }
 
     }
+
+
 
 }

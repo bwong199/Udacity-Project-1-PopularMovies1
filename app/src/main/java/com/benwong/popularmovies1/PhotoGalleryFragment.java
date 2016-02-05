@@ -92,10 +92,13 @@ public class PhotoGalleryFragment extends Fragment {
 
     private void setupAdapter() {
 
+
         if (isAdded()) {
             mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
 //            mAdapter.notifyDataSetChanged();
         }
+
+//        mAdapter.notifyDataSetChanged();
 
     }
     void updateItems(String query){
@@ -133,6 +136,7 @@ public class PhotoGalleryFragment extends Fragment {
             intent.putExtra("Movie Plot", mMovieItem.getPlot());
             intent.putExtra("Movie Rating", mMovieItem.getRating());
             intent.putExtra("Release Date", mMovieItem.getRelease_date());
+            intent.putExtra("Movie ID", mMovieItem.getId());
             startActivity(intent);
         }
     }

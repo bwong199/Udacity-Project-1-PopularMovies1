@@ -80,6 +80,10 @@
                               android:textColor="#020000" android:textSize="13dp"
                               android:textStyle="bold" android:textAlignment="center"
                               android:layout_marginTop="30dp"/>
+                    <WebView
+                        android:layout_width="170dp"
+                        android:layout_height="167dp"
+                        android:id="@+id/movieTrailer" android:layout_gravity="center_horizontal|bottom"/>
                 </FrameLayout>
 
             </RelativeLayout>

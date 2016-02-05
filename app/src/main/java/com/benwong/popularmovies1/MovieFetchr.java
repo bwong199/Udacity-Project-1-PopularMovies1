@@ -22,9 +22,9 @@ public class MovieFetchr {
 
     private static final String TAG = "MovieFetchr";
 
-    private static final String API_KEY = "REPLACE ME HERE";
+    private static final String API_KEY = "873a05bbf1bd105ba14e62bc0de94a63";
 
-//    private static final String API_KEY = "REPLACE ME HERE";
+//    private static final String API_KEY = "eba456e9a33bf02c8d10006201c1f08e";
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
@@ -63,16 +63,6 @@ public class MovieFetchr {
                     .appendQueryParameter("api_key", API_KEY)
 
                     .build().toString();
-//            String url = Uri.parse("https://api.flickr.com/services/rest/")
-//                    .buildUpon()
-//                    .appendQueryParameter("method", "flickr.photos.getRecent")
-//                    .appendQueryParameter("api_key", API_KEY)
-//                    .appendQueryParameter("format", "json")
-//                    .appendQueryParameter("nojsoncallback", "1")
-//                    .appendQueryParameter("extras", "url_s")
-//                    .build().toString();
-
-
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);
@@ -85,41 +75,95 @@ public class MovieFetchr {
         return items;
     }
 
+    public List<MovieTrailer> fetchTrailer(String movieId){
+        List<MovieTrailer> trailers = new ArrayList<>();
+
+        try {
+            String url = Uri.parse("https://api.themoviedb.org/3/movie/"+movieId+"/videos")
+                    .buildUpon()
+                    .appendQueryParameter("api_key", API_KEY)
+
+                    .build().toString();
+            Log.i("Trailer URL", url);
+            String jsonString = getUrlString(url);
+            Log.i(TAG, "Received JSON: " + jsonString);
+            JSONObject jsonBody = new JSONObject(jsonString);
+            parseTrailers(trailers, jsonBody);
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to fetch items", ioe);
+        } catch (JSONException je) {
+            Log.e(TAG, "Failed to parse JSON", je);
+        }
+        return trailers;
+    }
+
+    public List<MovieReview> fetchReview(String movieId){
+        List<MovieReview> reviews = new ArrayList<>();
+        try {
+            String url = Uri.parse("https://api.themoviedb.org/3/movie/"+movieId+"/reviews")
+                    .buildUpon()
+                    .appendQueryParameter("api_key", API_KEY)
+
+                    .build().toString();
+            Log.i("Review URL", url);
+            String jsonString = getUrlString(url);
+            Log.i(TAG, "Received JSON: " + jsonString);
+            JSONObject jsonBody = new JSONObject(jsonString);
+            parseReviews(reviews, jsonBody);
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to fetch items", ioe);
+        } catch (JSONException je) {
+            Log.e(TAG, "Failed to parse JSON", je);
+        }
+        return reviews;
+    }
+
     private void parseItems(List<MovieItem> items, JSONObject jsonBody) throws IOException, JSONException {
         JSONArray photoJsonArray = jsonBody.getJSONArray("results");
-
-
-//        for(int i = 0; i < photoJsonArray.length(); i++){
-//
-//            JSONObject jsonPart = photoJsonArray.getJSONObject(i);
-//
-//            Log.i("title", jsonPart.getString("title"));
-//            Log.i(TAG, "Title: " + jsonPart.getString("title"));
-//        }
-
 
         for (int i = 0; i < photoJsonArray.length(); i++) {
             JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);
             MovieItem item = new MovieItem();
             item.setId(photoJsonObject.getString("id"));
-//            item.setTitle(photoJsonObject.getString("title"));
+
             item.setCaption(photoJsonObject.getString("title"));
-//            if (!photoJsonObject.has("url_s")) {
-//                continue;
-//            }
+
             item.setRating(photoJsonObject.getDouble("vote_average"));
             item.setPlot(photoJsonObject.getString("overview"));
             item.setRelease_date(photoJsonObject.getString("release_date"));
 
-
             item.setUrl("https://image.tmdb.org/t/p/w92/" + photoJsonObject.getString("poster_path"));
-//            item.setOwner(photoJsonObject.getString("owner"));
 
             items.add(item);
-//            Log.i("MovieItemTitle", String.valueOf(items.get(i).getCaption()));
-//            Log.i("MovieItemID", String.valueOf(items.get(i).getId()));
-//            Log.i("MovieItemURL", String.valueOf(items.get(i).getUrl()));
-//            Log.i("MovieRating", String.valueOf(items.get(i).getRelease_date()));
+
+        }
+    }
+
+    private void parseTrailers(List<MovieTrailer> trailers, JSONObject jsonBody) throws IOException, JSONException {
+        JSONArray photoJsonArray = jsonBody.getJSONArray("results");
+
+        for (int i = 0; i < photoJsonArray.length(); i++) {
+            JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);
+            MovieTrailer trailer = new MovieTrailer();
+            trailer.setId(photoJsonObject.getString("id"));
+            trailer.setKey(photoJsonObject.getString("key"));
+
+            trailers.add(trailer);
+
+        }
+    }
+
+    private void parseReviews(List<MovieReview> reviews, JSONObject jsonBody) throws IOException, JSONException {
+        JSONArray photoJsonArray = jsonBody.getJSONArray("results");
+
+        for (int i = 0; i < photoJsonArray.length(); i++) {
+            JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);
+            MovieReview review = new MovieReview();
+            review.setAuthor(photoJsonObject.getString("author"));
+            review.setContent(photoJsonObject.getString("content"));
+            review.setReviewURL(photoJsonObject.getString("url"));
+
+            reviews.add(review);
 
         }
     }

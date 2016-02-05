@@ -92,21 +92,17 @@ public class PhotoGalleryFragment extends Fragment {
 
     private void setupAdapter() {
 
-//        if (isAdded()) {
-//            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
-//
-//        } else {
+        if (isAdded()) {
+            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
 //            mAdapter.notifyDataSetChanged();
-//        }
-//        if (isAdded()) {
-//            mAdapter.notifyDataSetChanged();
-//        }
+        }
 
     }
     void updateItems(String query){
         mItems.clear();
         new FetchItemsTask(query).execute();
 //        mPhotoRecyclerView.getAdapter().notifyDataSetChanged();
+
     }
     private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ImageView mItemImageView;

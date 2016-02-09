@@ -32,7 +32,6 @@ public class PhotoGalleryFragment extends Fragment {
     private PhotoAdapter mAdapter;
 
 
-
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
     }
@@ -55,7 +54,8 @@ public class PhotoGalleryFragment extends Fragment {
                 }
         );
 
-        mThumbnailDownloader.start();;
+        mThumbnailDownloader.start();
+        ;
         mThumbnailDownloader.getLooper();
         Log.i(TAG, "Background thread started");
 
@@ -94,20 +94,27 @@ public class PhotoGalleryFragment extends Fragment {
 
 
         if (isAdded()) {
-            mPhotoRecyclerView.setAdapter(new PhotoAdapter(mItems));
-//            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
+
         }
 
-//        mAdapter.notifyDataSetChanged();
+//        if(mAdapter == null){
+//            mAdapter = new PhotoAdapter(mItems);
+//            mPhotoRecyclerView.setAdapter(mAdapter);
+//        } else {
+//            mAdapter.notifyDataSetChanged();
+//        }
 
     }
-    void updateItems(String query){
+
+    void updateItems(String query) {
         mItems.clear();
         new FetchItemsTask(query).execute();
 //        mPhotoRecyclerView.getAdapter().notifyDataSetChanged();
 
     }
-    private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+    private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView mItemImageView;
         private MovieItem mMovieItem;
 
@@ -124,7 +131,7 @@ public class PhotoGalleryFragment extends Fragment {
             mItemImageView.setImageDrawable(drawable);
         }
 
-        public void bindMovieItem(MovieItem movieItem){
+        public void bindMovieItem(MovieItem movieItem) {
             mMovieItem = movieItem;
         }
 
@@ -143,10 +150,10 @@ public class PhotoGalleryFragment extends Fragment {
 
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
 
-        private List<MovieItem> mMovieItems;
+//        private List<MovieItem> mMovieItems;
 
         public PhotoAdapter(List<MovieItem> movieItems) {
-            mMovieItems = movieItems;
+//            mMovieItems = movieItems;
         }
 
         @Override
@@ -158,7 +165,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
-            MovieItem movieItem = mMovieItems.get(position);
+            MovieItem movieItem = mItems.get(position);
             photoHolder.bindMovieItem(movieItem);
             Drawable placeholder = getResources().getDrawable(R.drawable.bill_up_close);
             photoHolder.bindDrawable(placeholder);
@@ -167,13 +174,13 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return mMovieItems.size();
+            return mItems.size();
         }
 
     }
-
-    public  class FetchItemsTask extends AsyncTask<Void,Void,List<MovieItem>> {
+    public class FetchItemsTask extends AsyncTask<Void, Void, List<MovieItem>> {
         private String mQuery;
+
         public FetchItemsTask(String query) {
             mQuery = query;
         }
@@ -195,7 +202,6 @@ public class PhotoGalleryFragment extends Fragment {
         }
 
     }
-
 
 
 }

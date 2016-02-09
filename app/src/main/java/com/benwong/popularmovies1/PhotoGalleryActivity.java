@@ -10,10 +10,11 @@ import android.widget.Toast;
  */
 
 public class PhotoGalleryActivity extends SingleFragmentActivity{
-
+    private Fragment fragment;
     @Override
     protected Fragment createFragment() {
-        return PhotoGalleryFragment.newInstance();
+        fragment = PhotoGalleryFragment.newInstance();
+        return fragment;
     }
 
 //    public static Intent newIntent(Context context) {
@@ -37,8 +38,8 @@ public class PhotoGalleryActivity extends SingleFragmentActivity{
         //noinspection SimplifiableIfStatement
         if (id == R.id.topRatedMovies) {
             Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
-
-            new PhotoGalleryFragment().updateItems("top-rated");
+            PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            photoGalleryFragment.updateItems("top-rated");
             return true;
         }
 
@@ -47,6 +48,34 @@ public class PhotoGalleryActivity extends SingleFragmentActivity{
 //            startActivity(intent);
 //            return true;
 //        }
+
+        if (id == R.id.popular) {
+            Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
+            PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            photoGalleryFragment.updateItems("popular");
+            return true;
+        }
+
+        if (id == R.id.upcoming) {
+            Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
+            PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            photoGalleryFragment.updateItems("upcoming");
+            return true;
+        }
+
+        if (id == R.id.now_playing) {
+            Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
+            PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            photoGalleryFragment.updateItems("now_playing");
+            return true;
+        }
+
+        if (id == R.id.latest) {
+            Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
+            PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            photoGalleryFragment.updateItems("latest");
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

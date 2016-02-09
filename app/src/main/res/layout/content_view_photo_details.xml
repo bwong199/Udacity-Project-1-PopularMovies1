@@ -104,6 +104,12 @@
                         android:id="@+id/movieReview2" android:layout_gravity="left|bottom"
                         android:layout_marginLeft="10dp" android:layout_marginBottom="100dp"
                         android:textSize="10dp"/>
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Favourite"
+                        android:id="@+id/movieFavourite" android:layout_gravity="right|top"
+                        android:checked="false"/>
                 </FrameLayout>
 
             </RelativeLayout>

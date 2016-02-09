@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +21,7 @@ import java.util.List;
 
 public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.OnClickListener{
 
+    private MovieItem mMovieItem;
     private TextView movieCaption;
     private ImageView moviePoster;
     private TextView movieRating;
@@ -35,10 +38,7 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
     private String movieReviewURL;
     private String movieReviewURL2;
     private ImageView btnPlayVideo;
-
-
-
-
+    private CheckBox movieFavourite;
 
 //    WebView webView;
 
@@ -64,6 +64,15 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
         movieReleaseDate = (TextView)findViewById(R.id.releaseDate);
         movieReview = (TextView)findViewById(R.id.movieReviews);
         movieReview2 = (TextView)findViewById(R.id.movieReview2);
+        movieFavourite = (CheckBox)findViewById(R.id.movieFavourite);
+
+        movieFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Toast.makeText(getApplicationContext(), "making this movie my favourite", Toast.LENGTH_LONG).show();
+                mMovieItem.setFavourite(isChecked);
+            }
+        });
 
 
         btnPlayVideo = (ImageView)findViewById(R.id.btnPlayTrailer);
@@ -89,6 +98,8 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
         }
 
         Log.i("mTrailer size", String.valueOf(mTrailers.size()));
+
+
     }
 
     @Override

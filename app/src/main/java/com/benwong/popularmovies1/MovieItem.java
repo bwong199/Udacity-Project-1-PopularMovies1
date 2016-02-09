@@ -15,6 +15,15 @@ public class MovieItem implements Serializable{
     private String plot;
     private Double rating;
     private String release_date;
+    private boolean favourite;
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
+    }
 
     public String getPlot() {
         return plot;

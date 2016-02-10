@@ -53,6 +53,40 @@ public class MovieFetchr {
         return new String(getUrlBytes(urlSpec));
     }
 
+//    public List<MovieItem> fetchFavourites(){
+//        List<MovieItem> items = new ArrayList<>();
+//
+//        ViewPhotoDetailsActivity  ViewPhotoDetailsActivityVariable = new ViewPhotoDetailsActivity();
+//
+//        SQLiteDatabase favouriteDatabase = ViewPhotoDetailsActivityVariable.favouriteDatabase;
+//
+//        Cursor c = favouriteDatabase.rawQuery("SELECT * FROM favouriteMovies", null);
+//
+//        int idIndex = c.getColumnIndex("movieId");
+//
+//        int urlIndex = c.getColumnIndex("movieURL");
+//
+//        c.moveToFirst();
+//
+//        while(c != null){
+//            Log.i("favouriteMovies",c.getString(urlIndex));
+//
+//            MovieItem item = new MovieItem();
+//
+//            item.setId(c.getString(idIndex));
+//
+//            item.setUrl(c.getString(urlIndex));
+//
+//            PhotoGalleryFragment photoGalleryFragmentVariable = new PhotoGalleryFragment();
+//
+//            photoGalleryFragmentVariable.mItems.add(item);
+//
+//            c.moveToNext();
+//        }
+//
+//        return items;
+//    }
+
     public List<MovieItem> fetchItems(String argument) {
 
         List<MovieItem> items = new ArrayList<>();
@@ -64,7 +98,7 @@ public class MovieFetchr {
 
                     .build().toString();
             String jsonString = getUrlString(url);
-            Log.i(TAG, "Received JSON: " + jsonString);
+//            Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);
             parseItems(items, jsonBody);
         } catch (IOException ioe) {
@@ -84,9 +118,9 @@ public class MovieFetchr {
                     .appendQueryParameter("api_key", API_KEY)
 
                     .build().toString();
-            Log.i("Trailer URL", url);
+//            Log.i("Trailer URL", url);
             String jsonString = getUrlString(url);
-            Log.i(TAG, "Received JSON: " + jsonString);
+//            Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);
             parseTrailers(trailers, jsonBody);
         } catch (IOException ioe) {
@@ -105,9 +139,9 @@ public class MovieFetchr {
                     .appendQueryParameter("api_key", API_KEY)
 
                     .build().toString();
-            Log.i("Review URL", url);
+//            Log.i("Review URL", url);
             String jsonString = getUrlString(url);
-            Log.i(TAG, "Received JSON: " + jsonString);
+//            Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);
             parseReviews(reviews, jsonBody);
         } catch (IOException ioe) {

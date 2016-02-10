@@ -10,16 +10,17 @@
           android:orderInCategory="100"
           android:title="Popular Movies"
           app:showAsAction="never"/>
-      <item android:id="@+id/upcoming"
-            android:orderInCategory="100"
-            android:title="Upcoming Movies"
-            app:showAsAction="never"/>
-      <item android:id="@+id/now_playing"
-            android:orderInCategory="100"
-            android:title="Movies in Theatre"
-            app:showAsAction="never"/>
-      <item android:id="@+id/latest"
-            android:orderInCategory="100"
-            android:title="Latest Movies"
-            app:showAsAction="never"/>
+    <item android:id="@+id/upcoming"
+          android:orderInCategory="100"
+          android:title="Upcoming Movies"
+          app:showAsAction="never"/>
+    <item android:id="@+id/now_playing"
+          android:orderInCategory="100"
+          android:title="Movies in Theatre"
+          app:showAsAction="never"/>
+
+    <item android:id="@+id/favourites"
+          android:orderInCategory="100"
+          android:title="Favourite Movies"
+          app:showAsAction="never"/>
 </menu>

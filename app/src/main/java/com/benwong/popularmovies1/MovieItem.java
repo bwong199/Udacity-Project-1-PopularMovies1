@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public class MovieItem implements Serializable{
 
+
+
     private static final long serialVersionUID = 1L;
 
     private String mCaption;
@@ -71,6 +73,7 @@ public class MovieItem implements Serializable{
     public String getId() {
         return mId;
     }
+
 
     public void setId(String id) {
         mId = id;

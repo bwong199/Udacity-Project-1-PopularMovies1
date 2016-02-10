@@ -48,32 +48,26 @@ public class PhotoGalleryActivity extends SingleFragmentActivity{
 //            startActivity(intent);
 //            return true;
 //        }
-
         if (id == R.id.popular) {
-            Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             photoGalleryFragment.updateItems("popular");
             return true;
         }
 
         if (id == R.id.upcoming) {
-            Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             photoGalleryFragment.updateItems("upcoming");
             return true;
         }
-
         if (id == R.id.now_playing) {
-            Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             photoGalleryFragment.updateItems("now_playing");
             return true;
         }
 
-        if (id == R.id.latest) {
-            Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
+        if (id == R.id.favourites) {
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            photoGalleryFragment.updateItems("latest");
+            photoGalleryFragment.updateItems("");
             return true;
         }
 

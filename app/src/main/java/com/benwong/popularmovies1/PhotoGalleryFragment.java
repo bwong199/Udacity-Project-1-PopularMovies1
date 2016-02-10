@@ -1,6 +1,8 @@
 package com.benwong.popularmovies1;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -23,13 +25,15 @@ import java.util.List;
  * Created by benwong on 2016-02-02.
  */
 public class PhotoGalleryFragment extends Fragment {
-
+    SQLiteDatabase favouriteDatabase;
     private static final String TAG = "PhotoGalleryFragment";
 
     private RecyclerView mPhotoRecyclerView;
-    private List<MovieItem> mItems = new ArrayList<>();
+    public List<MovieItem> mItems = new ArrayList<>();
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
     private PhotoAdapter mAdapter;
+
+
 
 
     public static PhotoGalleryFragment newInstance() {
@@ -58,6 +62,10 @@ public class PhotoGalleryFragment extends Fragment {
         ;
         mThumbnailDownloader.getLooper();
         Log.i(TAG, "Background thread started");
+
+
+
+
 
     }
 
@@ -92,7 +100,6 @@ public class PhotoGalleryFragment extends Fragment {
 
     private void setupAdapter() {
 
-
         if (isAdded()) {
             mAdapter.notifyDataSetChanged();
 
@@ -109,7 +116,49 @@ public class PhotoGalleryFragment extends Fragment {
 
     void updateItems(String query) {
         mItems.clear();
-        new FetchItemsTask(query).execute();
+        if(!query.isEmpty()){
+            new FetchItemsTask(query).execute();
+        } else {
+            List<MovieItem> items = new ArrayList<>();
+
+            favouriteDatabase = SQLiteDatabase.openDatabase("/data/data/com.benwong.popularmovies1/databases/Movies", null, SQLiteDatabase.OPEN_READONLY);
+
+            Cursor c = favouriteDatabase.rawQuery("SELECT * FROM favouriteMovies", null);
+
+            int idIndex = c.getColumnIndex("movieId");
+            int urlIndex = c.getColumnIndex("movieURL");
+            int titleIndex = c.getColumnIndex("movieTitle");
+            int plotIndex = c.getColumnIndex("moviePlot");
+            int ratingIndex = c.getColumnIndex("movieRating");
+            int releaseDateIndex = c.getColumnIndex("movieReleaseDate");
+
+
+            if(c != null && c.moveToFirst()){
+                do{
+                    MovieItem item = new MovieItem();
+
+                    item.setId(c.getString(idIndex));
+
+                    item.setUrl(c.getString(urlIndex));
+
+                    item.setCaption(c.getString(titleIndex));
+
+                    item.setPlot(c.getString(plotIndex));
+
+                    item.setRating(c.getDouble(ratingIndex));
+
+                    item.setRelease_date(c.getString(releaseDateIndex));
+
+                    items.add(item);
+                } while(c.moveToNext());
+            }
+
+            mItems = items;
+
+            setupAdapter();
+
+        }
+
 //        mPhotoRecyclerView.getAdapter().notifyDataSetChanged();
 
     }
@@ -144,6 +193,7 @@ public class PhotoGalleryFragment extends Fragment {
             intent.putExtra("Movie Rating", mMovieItem.getRating());
             intent.putExtra("Release Date", mMovieItem.getRelease_date());
             intent.putExtra("Movie ID", mMovieItem.getId());
+//            intent.putExtra("Movie position")
             startActivity(intent);
         }
     }
@@ -167,8 +217,7 @@ public class PhotoGalleryFragment extends Fragment {
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
             MovieItem movieItem = mItems.get(position);
             photoHolder.bindMovieItem(movieItem);
-            Drawable placeholder = getResources().getDrawable(R.drawable.bill_up_close);
-            photoHolder.bindDrawable(placeholder);
+
             mThumbnailDownloader.queueThumbnail(photoHolder, movieItem.getUrl());
         }
 
@@ -193,9 +242,9 @@ public class PhotoGalleryFragment extends Fragment {
         @Override
         protected void onPostExecute(List<MovieItem> items) {
             mItems = items;
-            for (int i = 0; i < mItems.size(); i++) {
-                Log.i("MovieInGalleryFragment", mItems.get(i).getCaption());
-            }
+//            for (int i = 0; i < mItems.size(); i++) {
+//                Log.i("MovieInGalleryFragment", mItems.get(i).getCaption());
+//            }
 
             setupAdapter();
 

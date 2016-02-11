@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -26,6 +27,7 @@ import java.util.List;
  */
 public class PhotoGalleryFragment extends Fragment {
     SQLiteDatabase favouriteDatabase;
+
     private static final String TAG = "PhotoGalleryFragment";
 
     private RecyclerView mPhotoRecyclerView;
@@ -115,47 +117,65 @@ public class PhotoGalleryFragment extends Fragment {
     }
 
     void updateItems(String query) {
+
+
         mItems.clear();
         if(!query.isEmpty()){
             new FetchItemsTask(query).execute();
         } else {
-            List<MovieItem> items = new ArrayList<>();
 
-            favouriteDatabase = SQLiteDatabase.openDatabase("/data/data/com.benwong.popularmovies1/databases/Movies", null, SQLiteDatabase.OPEN_READONLY);
+            try {
+                List<MovieItem> items = new ArrayList<>();
 
-            Cursor c = favouriteDatabase.rawQuery("SELECT * FROM favouriteMovies", null);
+                boolean inEmulator = "generic".equals(Build.BRAND.toLowerCase());
+                //check to see if it's running on Emulator or device. Set favouriteDatabase to different path based on if it's running on emulator or device
 
-            int idIndex = c.getColumnIndex("movieId");
-            int urlIndex = c.getColumnIndex("movieURL");
-            int titleIndex = c.getColumnIndex("movieTitle");
-            int plotIndex = c.getColumnIndex("moviePlot");
-            int ratingIndex = c.getColumnIndex("movieRating");
-            int releaseDateIndex = c.getColumnIndex("movieReleaseDate");
+                if(inEmulator){
+                    favouriteDatabase = SQLiteDatabase.openDatabase("/data/data/com.benwong.popularmovies1/databases/Movies", null, SQLiteDatabase.OPEN_READONLY);
+
+                } else {
+                    favouriteDatabase = SQLiteDatabase.openDatabase("/data/user/0/com.benwong.popularmovies1/databases/Movies", null, SQLiteDatabase.OPEN_READONLY);
+//
+                }
+
+                Cursor c = favouriteDatabase.rawQuery("SELECT * FROM favouriteMovies", null);
+
+                int idIndex = c.getColumnIndex("movieId");
+                int urlIndex = c.getColumnIndex("movieURL");
+                int titleIndex = c.getColumnIndex("movieTitle");
+                int plotIndex = c.getColumnIndex("moviePlot");
+                int ratingIndex = c.getColumnIndex("movieRating");
+                int releaseDateIndex = c.getColumnIndex("movieReleaseDate");
 
 
-            if(c != null && c.moveToFirst()){
-                do{
-                    MovieItem item = new MovieItem();
+                if(c != null && c.moveToFirst()){
+                    do{
+                        MovieItem item = new MovieItem();
 
-                    item.setId(c.getString(idIndex));
+                        item.setId(c.getString(idIndex));
 
-                    item.setUrl(c.getString(urlIndex));
+                        item.setUrl(c.getString(urlIndex));
 
-                    item.setCaption(c.getString(titleIndex));
+                        item.setCaption(c.getString(titleIndex));
 
-                    item.setPlot(c.getString(plotIndex));
+                        item.setPlot(c.getString(plotIndex));
 
-                    item.setRating(c.getDouble(ratingIndex));
+                        item.setRating(c.getDouble(ratingIndex));
 
-                    item.setRelease_date(c.getString(releaseDateIndex));
+                        item.setRelease_date(c.getString(releaseDateIndex));
 
-                    items.add(item);
-                } while(c.moveToNext());
+                        items.add(item);
+                    } while(c.moveToNext());
+                }
+
+                mItems = items;
+
+                setupAdapter();
+            } catch(Exception e){
+                e.printStackTrace();
             }
 
-            mItems = items;
 
-            setupAdapter();
 
         }
 

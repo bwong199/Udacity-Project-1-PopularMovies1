@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -44,6 +45,7 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
     private String movieReviewURL2;
     private ImageView btnPlayVideo;
     private CheckBox movieFavourite;
+    Cursor c;
 
     private SQLiteDatabase favouriteDatabase ;
 
@@ -73,7 +75,21 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
 
         favouriteDatabase =  this.openOrCreateDatabase("Movies", MODE_PRIVATE, null);
 
-        Cursor c = favouriteDatabase.rawQuery("SELECT * FROM favouriteMovies WHERE movieId =" + movieId + " LIMIT 1", null);
+        favouriteDatabase.execSQL("CREATE TABLE IF NOT EXISTS favouriteMovies (movieId VARCHAR, movieURL VARCHAR, movieTitle VARCHAR, moviePlot VARCHAR,  movieRating REAL, movieReleaseDate VARCHAR,  id INTEGER PRIMARY KEY)");
+
+
+        Log.i("dbpath", favouriteDatabase.getPath());
+
+//        File dbFile = getDatabasePath(String.valueOf(favouriteDatabase));
+//        Log.i("db path", dbFile.getAbsolutePath());
+
+
+
+        try {
+            c = favouriteDatabase.rawQuery("SELECT * FROM favouriteMovies WHERE movieId = " + movieId + " LIMIT 1", null);
+        } catch(Error e){
+            e.printStackTrace();
+        }
 
         if(c != null && c.moveToFirst()){
             do{
@@ -87,7 +103,6 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
 
                 if(isChecked){
                     try {
-                        favouriteDatabase.execSQL("CREATE TABLE IF NOT EXISTS favouriteMovies (movieId VARCHAR, movieURL VARCHAR, movieTitle VARCHAR, moviePlot VARCHAR,  movieRating REAL, movieReleaseDate VARCHAR,  id INTEGER PRIMARY KEY)");
 
                         favouriteDatabase.execSQL("INSERT INTO favouriteMovies (movieId, movieURL, movieTitle, moviePlot, movieRating, movieReleaseDate) " +
                                 "VALUES (" +

@@ -138,6 +138,9 @@ public class PhotoGalleryFragment extends Fragment {
 //
                 }
 
+                Log.i("dbpath", favouriteDatabase.getPath());
+
+
                 Cursor c = favouriteDatabase.rawQuery("SELECT * FROM favouriteMovies", null);
 
                 int idIndex = c.getColumnIndex("movieId");
@@ -262,9 +265,9 @@ public class PhotoGalleryFragment extends Fragment {
         @Override
         protected void onPostExecute(List<MovieItem> items) {
             mItems = items;
-//            for (int i = 0; i < mItems.size(); i++) {
-//                Log.i("MovieInGalleryFragment", mItems.get(i).getCaption());
-//            }
+            for (int i = 0; i < mItems.size(); i++) {
+                Log.i("MovieInGalleryFragment", mItems.get(i).getCaption());
+            }
 
             setupAdapter();
 

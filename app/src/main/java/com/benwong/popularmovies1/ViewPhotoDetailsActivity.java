@@ -45,7 +45,7 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
     private String movieReviewURL2;
     private ImageView btnPlayVideo;
     private CheckBox movieFavourite;
-    Cursor c;
+    private Cursor c;
 
     private SQLiteDatabase favouriteDatabase ;
 

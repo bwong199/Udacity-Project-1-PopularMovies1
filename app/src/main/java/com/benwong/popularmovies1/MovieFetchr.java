@@ -22,7 +22,7 @@ public class MovieFetchr {
 
     private static final String TAG = "MovieFetchr";
 
-    private static final String API_KEY = "873a05bbf1bd105ba14e62bc0de94a63";
+    private static final String API_KEY = "REPLACE YOUR API KEY";
 
 //    private static final String API_KEY = "eba456e9a33bf02c8d10006201c1f08e";
 
@@ -95,10 +95,9 @@ public class MovieFetchr {
             String url = Uri.parse("https://api.themoviedb.org/3/movie/"+argument)
                     .buildUpon()
                     .appendQueryParameter("api_key", API_KEY)
-
                     .build().toString();
             String jsonString = getUrlString(url);
-//            Log.i(TAG, "Received JSON: " + jsonString);
+            Log.i("URL", url);
             JSONObject jsonBody = new JSONObject(jsonString);
             parseItems(items, jsonBody);
         } catch (IOException ioe) {

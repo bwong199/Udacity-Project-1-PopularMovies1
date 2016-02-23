@@ -37,7 +37,7 @@ public class PhotoGalleryActivity extends SingleFragmentActivity{
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.topRatedMovies) {
-            Toast.makeText(getApplicationContext(), "Top Rated Movie selected", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Top-Rated Movies Selected", Toast.LENGTH_LONG).show();
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             photoGalleryFragment.updateItems("top-rated");
             return true;
@@ -49,23 +49,27 @@ public class PhotoGalleryActivity extends SingleFragmentActivity{
 //            return true;
 //        }
         if (id == R.id.popular) {
+            Toast.makeText(getApplicationContext(), "Popular Movies Selected", Toast.LENGTH_LONG).show();
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             photoGalleryFragment.updateItems("popular");
             return true;
         }
 
         if (id == R.id.upcoming) {
+            Toast.makeText(getApplicationContext(), "Upcoming Movies Selected", Toast.LENGTH_LONG).show();
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             photoGalleryFragment.updateItems("upcoming");
             return true;
         }
         if (id == R.id.now_playing) {
+            Toast.makeText(getApplicationContext(), "Movies in Theatre Selected", Toast.LENGTH_LONG).show();
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             photoGalleryFragment.updateItems("now_playing");
             return true;
         }
 
         if (id == R.id.favourites) {
+            Toast.makeText(getApplicationContext(), "Favourited Movies Selected", Toast.LENGTH_LONG).show();
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             photoGalleryFragment.updateItems("");
             return true;

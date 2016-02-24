@@ -38,8 +38,8 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
     private List<MovieTrailer> mTrailers = new ArrayList<>();
     private List<MovieReview> mReviews = new ArrayList<>();
     private MovieItem mMovieItem;
-
-    private String GOOGLE_API_KEY = "AIzaSyCAmyNN7EIvsE1wwubJh0E5ItpS9ydVFTo";
+    private String GOOGLE_API_KEY = "REPLACE WITH YOUR OWN GOOGLE API KEY";
+//    private String GOOGLE_API_KEY = "AIzaSyCAmyNN7EIvsE1wwubJh0E5ItpS9ydVFTo";
     private String YOUTUBE_VIDEO_ID = "";
     private String movieReviewURL;
     private String movieReviewURL2;
@@ -47,7 +47,7 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
     private CheckBox movieFavourite;
     private Cursor c;
 
-    private SQLiteDatabase favouriteDatabase ;
+    private SQLiteDatabase favouriteDatabase;
 
 //    WebView webView;
 
@@ -73,7 +73,7 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
         movieReview2 = (TextView) findViewById(R.id.movieReview2);
         movieFavourite = (CheckBox) findViewById(R.id.movieFavourite);
 
-        favouriteDatabase =  this.openOrCreateDatabase("Movies", MODE_PRIVATE, null);
+        favouriteDatabase = this.openOrCreateDatabase("Movies", MODE_PRIVATE, null);
 
         favouriteDatabase.execSQL("CREATE TABLE IF NOT EXISTS favouriteMovies (movieId VARCHAR, movieURL VARCHAR, movieTitle VARCHAR, moviePlot VARCHAR,  movieRating REAL, movieReleaseDate VARCHAR,  id INTEGER PRIMARY KEY)");
 
@@ -84,48 +84,47 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
 //        Log.i("db path", dbFile.getAbsolutePath());
 
 
-
         try {
             c = favouriteDatabase.rawQuery("SELECT * FROM favouriteMovies WHERE movieId = " + movieId + " LIMIT 1", null);
-        } catch(Error e){
+        } catch (Error e) {
             e.printStackTrace();
         }
 
-        if(c != null && c.moveToFirst()){
-            do{
+        if (c != null && c.moveToFirst()) {
+            do {
                 movieFavourite.setChecked(true);
-            } while(c.moveToNext());
+            } while (c.moveToNext());
         }
 
         movieFavourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(isChecked){
+                if (isChecked) {
                     try {
 
                         favouriteDatabase.execSQL("INSERT INTO favouriteMovies (movieId, movieURL, movieTitle, moviePlot, movieRating, movieReleaseDate) " +
-                                "VALUES (" +
-                                    movieId + "," +
-                                     "'" + url +"'" + ","+
-                                        "'" +   caption+ "'" +","+
-                                        "'" +  plot + "'" +","+
-                                         rating +","+
-                                        "'" +  releaseDate + "'" +
-                                ")"
+                                        "VALUES (" +
+                                        movieId + "," +
+                                        "'" + url + "'" + "," +
+                                        "'" + caption + "'" + "," +
+                                        "'" + plot + "'" + "," +
+                                        rating + "," +
+                                        "'" + releaseDate + "'" +
+                                        ")"
                         );
 
 
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                     movieFavourite.setChecked(true);
                 } else {
                     try {
-                        favouriteDatabase.execSQL("DELETE FROM favouriteMovies WHERE movieId = " + movieId );
+                        favouriteDatabase.execSQL("DELETE FROM favouriteMovies WHERE movieId = " + movieId);
 
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     movieFavourite.setChecked(false);
@@ -176,6 +175,9 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
 
         switch (v.getId()) {
             case R.id.btnPlayTrailer:
+//                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + YOUTUBE_VIDEO_ID));
+//                startActivity(intent);
+
                 intent = YouTubeStandalonePlayer.createVideoIntent(this, GOOGLE_API_KEY, YOUTUBE_VIDEO_ID);
                 if (isYoutubeInstalled == false) {
                     Toast.makeText(getApplicationContext(), "Youtube is not installed. Playing trailer in webview", Toast.LENGTH_LONG).show();
@@ -188,18 +190,23 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
                 }
                 break;
             case R.id.movieReviews:
-                if (movieReview.getText() == "No reviews yet") {
+                if (movieReview.getText().equals("No reviews yet")) {
                     Toast.makeText(getApplicationContext(), "No reviews yet", Toast.LENGTH_LONG).show();
                 } else {
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse(movieReviewURL));
                     startActivity(intent);
                 }
             case R.id.movieReview2:
-                if (movieReview2.getText() == "") {
+                if (movieReview2.getText().equals("No reviews yet")) {
                     Toast.makeText(getApplicationContext(), "No reviews yet", Toast.LENGTH_LONG).show();
                 } else {
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(movieReviewURL2));
-                    startActivity(intent);
+                    try {
+                        intent = new Intent(Intent.ACTION_VIEW, Uri.parse(movieReviewURL2));
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
         }
 
@@ -229,10 +236,10 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
         @Override
         protected void onPostExecute(List<MovieTrailer> trailers) {
             mTrailers = trailers;
-//            for (int i = 0; i < mTrailers.size(); i++) {
-//                Log.i("Youtube Trailer key", mTrailers.get(i).getKey());
-//                YOUTUBE_VIDEO_ID = mTrailers.get(0).getKey();
-//            }
+            for (int i = 0; i < mTrailers.size(); i++) {
+                Log.i("Youtube Trailer key", mTrailers.get(i).getKey());
+                YOUTUBE_VIDEO_ID = mTrailers.get(0).getKey();
+            }
 //            webView.loadUrl("https://www.youtube.com/watch?v="+ mTrailers.get(0).getKey());
         }
     }

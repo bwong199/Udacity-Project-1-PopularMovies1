@@ -1,14 +1,18 @@
 package com.benwong.popularmovies1;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -21,12 +25,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.OnClickListener {
-
-    PhotoGalleryFragment variable = new PhotoGalleryFragment();
-
-    private List<MovieItem> mMovies = variable.mItems;
-
+/**
+ * Created by benwong on 2016-02-24.
+ */
+public class MovieFragment extends Fragment implements View.OnClickListener{
 
     private TextView movieCaption;
     private ImageView moviePoster;
@@ -38,7 +40,7 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
     private List<MovieTrailer> mTrailers = new ArrayList<>();
     private List<MovieReview> mReviews = new ArrayList<>();
     private MovieItem mMovieItem;
-//    private String GOOGLE_API_KEY = "REPLACE WITH YOUR OWN GOOGLE API KEY";
+    //    private String GOOGLE_API_KEY = "REPLACE WITH YOUR OWN GOOGLE API KEY";
     private String GOOGLE_API_KEY = "AIzaSyCAmyNN7EIvsE1wwubJh0E5ItpS9ydVFTo";
     private String YOUTUBE_VIDEO_ID = "";
     private String movieReviewURL;
@@ -47,33 +49,88 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
     private CheckBox movieFavourite;
     private Cursor c;
 
+    private String caption;
+    private String url;
+    private String plot;
+    private Double rating;
+    private String releaseDate;
+    private String movieId;
+
     private SQLiteDatabase favouriteDatabase;
 
-//    WebView webView;
+    private static final String ARG_MOVIE_ID = "movie_id";
+
+//    //         intent.putExtra("Movie Title", mMovieItem.getCaption());
+//    intent.putExtra("Movie Poster", mMovieItem.getUrl());
+//    intent.putExtra("Movie Plot", mMovieItem.getPlot());
+//    intent.putExtra("Movie Rating", mMovieItem.getRating());
+//    intent.putExtra("Release Date", mMovieItem.getRelease_date());
+//    intent.putExtra("Movie ID", mMovieItem.getId());//
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_photo_details);
-        Intent intent = getIntent();
-        final String caption = intent.getStringExtra("Movie Title");
-        final String url = intent.getStringExtra("Movie Poster");
-        final String plot = intent.getStringExtra("Movie Plot");
-        final Double rating = intent.getDoubleExtra("Movie Rating", 0);
-        final String releaseDate = intent.getStringExtra("Release Date");
-        final String movieId = intent.getStringExtra("Movie ID");
+
+
+
+
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        View v = inflater.inflate(R.layout.fragment_movie, container, false);
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+            caption = bundle.getString("Movie Title") ;
+            url = bundle.getString("Movie Poster");
+            plot = bundle.getString("Movie Plot");
+            rating = bundle.getDouble("Movie Rating", 0);
+            releaseDate = bundle.getString("Release Date");
+            movieId = bundle.getString("Movie ID");
+
+            Log.i("Title Bundle", caption);
+            Log.i("url Bundle", url);
+            Log.i("plot Bundle", plot);
+            Log.i("rating Bundle", String.valueOf(rating));
+            Log.i("releaseDate Bundle", releaseDate);
+            Log.i("movieId Bundle", movieId);
+        } else {
+            Intent intent = getActivity().getIntent();
+            caption = intent.getStringExtra("Movie Title");
+            url = intent.getStringExtra("Movie Poster");
+            plot = intent.getStringExtra("Movie Plot");
+            rating = intent.getDoubleExtra("Movie Rating", 0);
+            releaseDate = intent.getStringExtra("Release Date");
+            movieId = intent.getStringExtra("Movie ID");
+        }
+
+
         new FetchTrailersTask(movieId).execute();
         new FetchReviewsTask(movieId).execute();
-        movieCaption = (TextView) findViewById(R.id.movieCaption);
-        moviePoster = (ImageView) findViewById(R.id.moviePoster);
-        movieRating = (TextView) findViewById(R.id.movieRating);
-        moviePlot = (TextView) findViewById(R.id.moviePlot);
-        movieReleaseDate = (TextView) findViewById(R.id.releaseDate);
-        movieReview = (TextView) findViewById(R.id.movieReviews);
-        movieReview2 = (TextView) findViewById(R.id.movieReview2);
-        movieFavourite = (CheckBox) findViewById(R.id.movieFavourite);
+        movieCaption = (TextView) v.findViewById(R.id.movieCaption);
+        moviePoster = (ImageView) v.findViewById(R.id.moviePoster);
+        movieRating = (TextView) v.findViewById(R.id.movieRating);
+        moviePlot = (TextView) v.findViewById(R.id.moviePlot);
+        movieReleaseDate = (TextView) v.findViewById(R.id.releaseDate);
+        movieReview = (TextView) v.findViewById(R.id.movieReviews);
+        movieReview2 = (TextView) v.findViewById(R.id.movieReview2);
+        movieFavourite = (CheckBox) v.findViewById(R.id.movieFavourite);
 
-        favouriteDatabase = this.openOrCreateDatabase("Movies", MODE_PRIVATE, null);
+        btnPlayVideo = (ImageView) v.findViewById(R.id.btnPlayTrailer);
+        btnPlayVideo.setOnClickListener(this);
+        movieReview.setOnClickListener(this);
+        movieReview2.setOnClickListener(this);
+
+        movieCaption.setText(caption);
+        moviePlot.setText(plot);
+        movieRating.setText(String.valueOf("Average rating - " + rating + "/10"));
+        movieReleaseDate.setText("Released " + releaseDate);
+        Picasso.with(getContext()).load(url).into(moviePoster);
+
+        favouriteDatabase = getActivity().openOrCreateDatabase("Movies", Context.MODE_PRIVATE, null);
 
         favouriteDatabase.execSQL("CREATE TABLE IF NOT EXISTS favouriteMovies (movieId VARCHAR, movieURL VARCHAR, movieTitle VARCHAR, moviePlot VARCHAR,  movieRating REAL, movieReleaseDate VARCHAR,  id INTEGER PRIMARY KEY)");
 
@@ -138,36 +195,33 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
         });
 
 
-        btnPlayVideo = (ImageView) findViewById(R.id.btnPlayTrailer);
 
 
-        btnPlayVideo.setOnClickListener(this);
-        movieReview.setOnClickListener(this);
-        movieReview2.setOnClickListener(this);
+
+
 //        webView = (WebView)findViewById(R.id.movieTrailer);
 //        webView.getSettings().setJavaScriptEnabled(true);
 //        webView.setWebViewClient(new WebViewClient());
 
-        movieCaption.setText(caption);
-        moviePlot.setText(plot);
-        movieRating.setText(String.valueOf("Average rating - " + rating + "/10"));
-        movieReleaseDate.setText("Released " + releaseDate);
-        Picasso.with(this).load(url).into(moviePoster);
 
 
-//        for (int i = 0; i < mTrailers.size(); i++) {
-//            Log.i("Trailer key in onCreate", mTrailers.get(i).getKey());
-//            Log.i("Trailer key in onCreate", mTrailers.get(0).getKey());
-//        }
-//
-//        Log.i("mTrailer size", String.valueOf(mTrailers.size()));
 
 
+
+        return v;
+    }
+
+    protected boolean isAppInstalled(String packageName) {
+        Intent mIntent = getActivity().getPackageManager().getLaunchIntentForPackage(packageName);
+        if (mIntent != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public void onClick(View v) {
-
         String packageName = "com.google.android.youtube";
         boolean isYoutubeInstalled = isAppInstalled(packageName);
 
@@ -178,9 +232,9 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
 //                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + YOUTUBE_VIDEO_ID));
 //                startActivity(intent);
 
-                intent = YouTubeStandalonePlayer.createVideoIntent(this, GOOGLE_API_KEY, YOUTUBE_VIDEO_ID);
+                intent = YouTubeStandalonePlayer.createVideoIntent(getActivity(), GOOGLE_API_KEY, YOUTUBE_VIDEO_ID);
                 if (isYoutubeInstalled == false) {
-                    Toast.makeText(getApplicationContext(), "Youtube is not installed. Playing trailer in webview", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Youtube is not installed. Playing trailer in webview", Toast.LENGTH_LONG).show();
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=" + YOUTUBE_VIDEO_ID));
                     startActivity(intent);
                 } else {
@@ -191,14 +245,14 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
                 break;
             case R.id.movieReviews:
                 if (movieReview.getText().equals("No reviews yet")) {
-                    Toast.makeText(getApplicationContext(), "No reviews yet", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "No reviews yet", Toast.LENGTH_LONG).show();
                 } else {
                     intent = new Intent(Intent.ACTION_VIEW, Uri.parse(movieReviewURL));
                     startActivity(intent);
                 }
             case R.id.movieReview2:
                 if (movieReview2.getText().equals("No reviews yet")) {
-                    Toast.makeText(getApplicationContext(), "No reviews yet", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "No reviews yet", Toast.LENGTH_LONG).show();
                 } else {
                     try {
                         intent = new Intent(Intent.ACTION_VIEW, Uri.parse(movieReviewURL2));
@@ -212,14 +266,7 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
 
     }
 
-    protected boolean isAppInstalled(String packageName) {
-        Intent mIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-        if (mIntent != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+
 
     public class FetchTrailersTask extends AsyncTask<Void, Void, List<MovieTrailer>> {
         private String mQuery;
@@ -265,6 +312,7 @@ public class ViewPhotoDetailsActivity extends AppCompatActivity implements View.
 //
 //
 //            }
+
             if (mReviews.size() > 0) {
                 movieReview.setText(mReviews.get(0).getAuthor() + "'s review");
                 movieReviewURL = mReviews.get(0).getReviewURL();

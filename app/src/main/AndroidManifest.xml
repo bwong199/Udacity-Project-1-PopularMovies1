@@ -9,10 +9,14 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Ben Wong - Udacity Popular Movies"
         android:supportsRtl="true"
+        android:configChanges="screenSize|orientation|screenLayout"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".MovieActivity">
+        </activity>
+        <activity
             android:name=".PhotoGalleryActivity"
-
+            android:configChanges="screenSize|orientation|screenLayout"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -22,7 +26,7 @@
         </activity>
         <activity
             android:name=".ViewPhotoDetailsActivity"
-
+            android:configChanges="screenSize|orientation|screenLayout"
           >
         </activity>
     </application>

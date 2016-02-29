@@ -21,8 +21,8 @@ import java.util.List;
 public class MovieFetchr {
 
     private static final String TAG = "MovieFetchr";
-    private static final String API_KEY = "REPLACE WITH YOUR OWN MOVIEDB API KEY";
-//    private static final String API_KEY = "873a05bbf1bd105ba14e62bc0de94a63";
+//    private static final String API_KEY = "REPLACE WITH YOUR OWN MOVIEDB API KEY";
+    private static final String API_KEY = "873a05bbf1bd105ba14e62bc0de94a63";
 
 
     public byte[] getUrlBytes(String urlSpec) throws IOException {

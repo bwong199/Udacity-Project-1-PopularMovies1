@@ -1,6 +1,8 @@
 package com.benwong.popularmovies1;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -9,17 +11,39 @@ import android.widget.Toast;
  * Created by benwong on 2016-02-02.
  */
 
-public class PhotoGalleryActivity extends SingleFragmentActivity{
+public class PhotoGalleryActivity extends SingleFragmentActivity
+        implements PhotoGalleryFragment.Callbacks
+{
     private Fragment fragment;
+    private boolean mTwoPane;
+
     @Override
     protected Fragment createFragment() {
         fragment = PhotoGalleryFragment.newInstance();
         return fragment;
     }
 
-//    public static Intent newIntent(Context context) {
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_masterdetail;
+    }
+
+    //    public static Intent newIntent(Context context) {
 //        return new Intent(context, PhotoGalleryActivity.class);
 //    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_masterdetail);
+
+        if(findViewById(R.id.detail_fragment_container) != null){
+            mTwoPane = true;
+            Log.i("TwoPane?", String.valueOf(mTwoPane));
+
+
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -78,4 +102,8 @@ public class PhotoGalleryActivity extends SingleFragmentActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onMovieSelected(MovieItem movieItem) {
+
+    }
 }

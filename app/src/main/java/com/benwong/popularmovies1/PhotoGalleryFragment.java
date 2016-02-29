@@ -1,5 +1,6 @@
 package com.benwong.popularmovies1;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +28,9 @@ import java.util.List;
  * Created by benwong on 2016-02-02.
  */
 public class PhotoGalleryFragment extends Fragment {
+
+    Callbacks mCallbacks;
+
     SQLiteDatabase favouriteDatabase;
 
     private static final String TAG = "PhotoGalleryFragment";
@@ -34,18 +39,53 @@ public class PhotoGalleryFragment extends Fragment {
     public List<MovieItem> mItems = new ArrayList<>();
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
     private PhotoAdapter mAdapter;
+    private boolean mTwoPane;
+    private String MOVIE_KEY;
 
+    ArrayList<MovieItem> saveInstanceList;
 
+    // The container Activity must implement this interface so the frag can deliver messages
+    public interface Callbacks {
+        /** Called by HeadlinesFragment when a list item is selected */
+        public void onMovieSelected(MovieItem movieItem);
+    }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
 
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
     }
 
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState != null)
+        {
+
+            mItems = savedInstanceState.getParcelableArrayList(MOVIE_KEY);
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+
+
+        if (savedInstanceState != null)
+        {
+
+
+//            mItems = (  List<MovieItem>)savedInstanceState.get(MOVIE_KEY);
+            mItems = savedInstanceState.getParcelableArrayList(MOVIE_KEY);
+        }
 //        updateItems("popular");
         new FetchItemsTask("popular").execute();
         Handler responseHandler = new Handler();
@@ -65,10 +105,21 @@ public class PhotoGalleryFragment extends Fragment {
         mThumbnailDownloader.getLooper();
         Log.i(TAG, "Background thread started");
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        outState.putParcelableArrayList(MOVIE_KEY, (ArrayList<? extends Parcelable>) mItems);
+        super.onSaveInstanceState(outState);
+    }
 
 
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     @Override
@@ -92,6 +143,11 @@ public class PhotoGalleryFragment extends Fragment {
         super.onDestroyView();
         mThumbnailDownloader.clearQueue();
     }
+
+
+
+
+
 
     @Override
     public void onDestroy() {
@@ -209,15 +265,30 @@ public class PhotoGalleryFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), ViewPhotoDetailsActivity.class);
-            intent.putExtra("Movie Title", mMovieItem.getCaption());
-            intent.putExtra("Movie Poster", mMovieItem.getUrl());
-            intent.putExtra("Movie Plot", mMovieItem.getPlot());
-            intent.putExtra("Movie Rating", mMovieItem.getRating());
-            intent.putExtra("Release Date", mMovieItem.getRelease_date());
-            intent.putExtra("Movie ID", mMovieItem.getId());
-//            intent.putExtra("Movie position")
-            startActivity(intent);
+            if (getActivity().findViewById(R.id.detail_fragment_container) == null) {
+                Intent intent = new Intent(getActivity(), MovieActivity.class);
+                intent.putExtra("Movie Title", mMovieItem.getCaption());
+                intent.putExtra("Movie Poster", mMovieItem.getUrl());
+                intent.putExtra("Movie Plot", mMovieItem.getPlot());
+                intent.putExtra("Movie Rating", mMovieItem.getRating());
+                intent.putExtra("Release Date", mMovieItem.getRelease_date());
+                intent.putExtra("Movie ID", mMovieItem.getId());
+                startActivity(intent);
+            } else {
+                MovieFragment fragment = new MovieFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("Movie Title", mMovieItem.getCaption());
+                bundle.putString("Movie Poster", mMovieItem.getUrl());
+                bundle.putString("Movie Plot", mMovieItem.getPlot());
+                bundle.putString("Release Date", mMovieItem.getRelease_date());
+                bundle.putString("Movie ID", mMovieItem.getId());
+                bundle.putDouble("Movie Rating", mMovieItem.getRating());
+                fragment.setArguments(bundle);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.detail_fragment_container, fragment).commit();
+            }
+
+
         }
     }
 

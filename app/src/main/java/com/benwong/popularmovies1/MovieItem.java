@@ -1,11 +1,12 @@
 package com.benwong.popularmovies1;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by benwong on 2016-02-03.
  */
-public class MovieItem implements Serializable{
+public class MovieItem implements Parcelable{
 
 
 
@@ -18,6 +19,48 @@ public class MovieItem implements Serializable{
     private Double rating;
     private String release_date;
     private boolean favourite;
+
+    public MovieItem() {
+    }
+
+    protected MovieItem(Parcel in) {
+        mCaption = in.readString();
+        mId = in.readString();
+        mUrl = in.readString();
+        plot = in.readString();
+        release_date = in.readString();
+        favourite = in.readByte() != 0;
+        mTitle = in.readString();
+    }
+
+    public static final Creator<MovieItem> CREATOR = new Creator<MovieItem>() {
+        @Override
+        public MovieItem createFromParcel(Parcel in) {
+            return new MovieItem(in);
+        }
+
+        @Override
+        public MovieItem[] newArray(int size) {
+            return new MovieItem[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+
+        out.writeString(mCaption);
+        out.writeString(mId);
+        out.writeString(mUrl);
+        out.writeString(plot);
+        out.writeDouble(rating);
+        out.writeString(release_date);
+
+    }
 
     public boolean isFavourite() {
         return favourite;
@@ -94,4 +137,6 @@ public class MovieItem implements Serializable{
     public void setTitle(String title) {
         mTitle = title;
     }
+
+
 }

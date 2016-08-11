@@ -1,7 +1,9 @@
 package com.benwong.popularmovies1;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -13,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -39,10 +42,13 @@ public class PhotoGalleryFragment extends Fragment {
     public List<MovieItem> mItems = new ArrayList<>();
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
     private PhotoAdapter mAdapter;
+    public static String fetchPage = "1";
     private boolean mTwoPane;
     private String MOVIE_KEY;
-
+    private SwipeRefreshLayout swipeContainer;
     ArrayList<MovieItem> saveInstanceList;
+    public static String category = "popular";
+    GridLayoutManager gridLayoutManager;
 
     // The container Activity must implement this interface so the frag can deliver messages
     public interface Callbacks {
@@ -56,29 +62,39 @@ public class PhotoGalleryFragment extends Fragment {
         mCallbacks = (Callbacks) activity;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
     public static PhotoGalleryFragment newInstance() {
         return new PhotoGalleryFragment();
     }
 
 
+
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-
-        if (savedInstanceState != null)
-        {
-
-            mItems = savedInstanceState.getParcelableArrayList(MOVIE_KEY);
-        }
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        System.out.println("On Attach called");
     }
+
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
+        System.out.println("On Create Called");
 
         super.onCreate(savedInstanceState);
 
-
+        if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            gridLayoutManager  = new GridLayoutManager(getActivity(), 5);
+        } else if ( getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            gridLayoutManager  = new GridLayoutManager(getActivity(), 8);
+        }
         if (savedInstanceState != null)
         {
 
@@ -86,8 +102,13 @@ public class PhotoGalleryFragment extends Fragment {
 //            mItems = (  List<MovieItem>)savedInstanceState.get(MOVIE_KEY);
             mItems = savedInstanceState.getParcelableArrayList(MOVIE_KEY);
         }
+
+
+
 //        updateItems("popular");
-        new FetchItemsTask("popular").execute();
+        new FetchItemsTask(category, fetchPage).execute();
+        fetchPage = String.valueOf(Integer.parseInt(fetchPage) + 1) ;
+
         Handler responseHandler = new Handler();
         mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
         mThumbnailDownloader.setThumbnailDownloadListener(
@@ -104,6 +125,7 @@ public class PhotoGalleryFragment extends Fragment {
         ;
         mThumbnailDownloader.getLooper();
         Log.i(TAG, "Background thread started");
+
 
     }
 
@@ -128,11 +150,55 @@ public class PhotoGalleryFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
         mPhotoRecyclerView = (RecyclerView) v
                 .findViewById(R.id.fragment_photo_gallery_recycler_view);
-        mPhotoRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 5));
+
+        if( getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+            gridLayoutManager  = new GridLayoutManager(getActivity(), 5);
+        } else if ( getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            gridLayoutManager  = new GridLayoutManager(getActivity(), 8);
+        }
+
+        mPhotoRecyclerView.setLayoutManager(gridLayoutManager);
         mAdapter = new PhotoAdapter(mItems);
         mPhotoRecyclerView.setAdapter(mAdapter);
 
+        mPhotoRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+//                customLoadMoreDataFromApi(fetchPage);
+//                List<Contact> moreContacts = Contact.createContactsList(10, fetchPage);
+//                final int curSize = adapter.getItemCount();
+//                allContacts.addAll(moreContacts);
+//                Handler handler = new Handler();
+//
+//                final Runnable r = new Runnable() {
+//                    public void run() {
+//                        adapter.notifyItemRangeInserted(curSize, allContacts.size() - 1);
+//                    }
+//                };
+                fetchPage = String.valueOf(Integer.parseInt(fetchPage) + 1) ;
+                new FetchItemsTask(category, fetchPage).execute();
+                swipeContainer.setRefreshing(true);
+            }
+        });
 
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+//        swipeContainer.setBackgroundResource(darkknight);
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                mItems.clear();
+                swipeContainer.setRefreshing(true);
+                mAdapter.notifyDataSetChanged();
+                fetchPage = "1";
+                new FetchItemsTask(category, fetchPage).execute();
+            }
+        });
         setupAdapter();
 
         return v;
@@ -156,7 +222,7 @@ public class PhotoGalleryFragment extends Fragment {
         Log.i(TAG, "Background thread destroyed");
     }
 
-    private void setupAdapter() {
+    public void setupAdapter() {
 
         if (isAdded()) {
             mAdapter.notifyDataSetChanged();
@@ -177,7 +243,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         mItems.clear();
         if(!query.isEmpty()){
-            new FetchItemsTask(query).execute();
+            new FetchItemsTask(query, fetchPage).execute();
         } else {
 
             try {
@@ -323,25 +389,31 @@ public class PhotoGalleryFragment extends Fragment {
     }
     public class FetchItemsTask extends AsyncTask<Void, Void, List<MovieItem>> {
         private String mQuery;
+        private String mPage;
 
         public FetchItemsTask(String query) {
             mQuery = query;
         }
 
+        public FetchItemsTask(String query, String page) {
+            mQuery = query;
+            mPage = page;
+        }
+
         @Override
         protected List<MovieItem> doInBackground(Void... params) {
-            return new MovieFetchr().fetchItems(mQuery);
+            return new MovieFetchr().fetchItems(mQuery, mPage);
         }
 
         @Override
         protected void onPostExecute(List<MovieItem> items) {
-            mItems = items;
+            mItems.addAll(items);
             for (int i = 0; i < mItems.size(); i++) {
                 Log.i("MovieInGalleryFragment", mItems.get(i).getCaption());
             }
 
             setupAdapter();
-
+            swipeContainer.setRefreshing(false);
         }
 
     }

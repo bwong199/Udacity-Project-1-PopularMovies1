@@ -86,7 +86,7 @@ public class MovieFetchr {
 //        return items;
 //    }
 
-    public List<MovieItem> fetchItems(String argument) {
+    public List<MovieItem> fetchItems(String argument, String page) {
 
         List<MovieItem> items = new ArrayList<>();
 
@@ -94,6 +94,7 @@ public class MovieFetchr {
             String url = Uri.parse("https://api.themoviedb.org/3/movie/"+argument)
                     .buildUpon()
                     .appendQueryParameter("api_key", API_KEY)
+                    .appendQueryParameter("page", page)
                     .build().toString();
             String jsonString = getUrlString(url);
             Log.i("URL", url);
@@ -137,9 +138,8 @@ public class MovieFetchr {
                     .appendQueryParameter("api_key", API_KEY)
 
                     .build().toString();
-//            Log.i("Review URL", url);
             String jsonString = getUrlString(url);
-//            Log.i(TAG, "Received JSON: " + jsonString);
+            Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonBody = new JSONObject(jsonString);
             parseReviews(reviews, jsonBody);
         } catch (IOException ioe) {
@@ -168,6 +168,7 @@ public class MovieFetchr {
 
             items.add(item);
 
+            new PhotoGalleryFragment().setupAdapter();
         }
     }
 

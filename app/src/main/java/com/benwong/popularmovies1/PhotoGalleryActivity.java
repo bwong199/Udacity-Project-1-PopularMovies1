@@ -1,11 +1,11 @@
 package com.benwong.popularmovies1;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 /**
  * Created by benwong on 2016-02-02.
@@ -61,9 +61,20 @@ public class PhotoGalleryActivity extends SingleFragmentActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.topRatedMovies) {
-            Toast.makeText(getApplicationContext(), "Top-Rated Movies Selected", Toast.LENGTH_LONG).show();
-            PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            photoGalleryFragment.updateItems("top-rated");
+//            Toast.makeText(getApplicationContext(), "Top-Rated Movies Selected", Toast.LENGTH_LONG).show();
+            final PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            photoGalleryFragment.updateItems(PhotoGalleryFragment.category);
+            PhotoGalleryFragment.category = "top_rated";
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    PhotoGalleryFragment.fetchPage = String.valueOf(Integer.parseInt(PhotoGalleryFragment.fetchPage) + 1) ;
+                    photoGalleryFragment.updateItems(PhotoGalleryFragment.category);
+                }
+            }, 3000);
+
             return true;
         }
 
@@ -73,27 +84,57 @@ public class PhotoGalleryActivity extends SingleFragmentActivity
 //            return true;
 //        }
         if (id == R.id.popular) {
-            Toast.makeText(getApplicationContext(), "Popular Movies Selected", Toast.LENGTH_LONG).show();
-            PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            photoGalleryFragment.updateItems("popular");
+//            Toast.makeText(getApplicationContext(), "Popular Movies Selected", Toast.LENGTH_LONG).show();
+            final PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            PhotoGalleryFragment.category = "popular";
+            photoGalleryFragment.updateItems(PhotoGalleryFragment.category);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    PhotoGalleryFragment.fetchPage = String.valueOf(Integer.parseInt(PhotoGalleryFragment.fetchPage) + 1) ;
+                    photoGalleryFragment.updateItems(PhotoGalleryFragment.category);
+                }
+            }, 3000);
             return true;
         }
 
         if (id == R.id.upcoming) {
-            Toast.makeText(getApplicationContext(), "Upcoming Movies Selected", Toast.LENGTH_LONG).show();
-            PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            photoGalleryFragment.updateItems("upcoming");
+//            Toast.makeText(getApplicationContext(), "Upcoming Movies Selected", Toast.LENGTH_LONG).show();
+            final PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            PhotoGalleryFragment.category = "upcoming";
+            photoGalleryFragment.updateItems(PhotoGalleryFragment.category);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    PhotoGalleryFragment.fetchPage = String.valueOf(Integer.parseInt(PhotoGalleryFragment.fetchPage) + 1) ;
+                    photoGalleryFragment.updateItems(PhotoGalleryFragment.category);
+                }
+            }, 3000);
+
             return true;
         }
         if (id == R.id.now_playing) {
-            Toast.makeText(getApplicationContext(), "Movies in Theatre Selected", Toast.LENGTH_LONG).show();
-            PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-            photoGalleryFragment.updateItems("now_playing");
+//            Toast.makeText(getApplicationContext(), "Movies in Theatre Selected", Toast.LENGTH_LONG).show();
+            final PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+            PhotoGalleryFragment.category = "now_playing";
+            photoGalleryFragment.updateItems(PhotoGalleryFragment.category);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    PhotoGalleryFragment.fetchPage = String.valueOf(Integer.parseInt(PhotoGalleryFragment.fetchPage) + 1) ;
+                    photoGalleryFragment.updateItems(PhotoGalleryFragment.category);
+                }
+            }, 3000);
+
+
             return true;
         }
 
         if (id == R.id.favourites) {
-            Toast.makeText(getApplicationContext(), "Favourited Movies Selected", Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), "Favourited Movies Selected", Toast.LENGTH_LONG).show();
             PhotoGalleryFragment photoGalleryFragment = (PhotoGalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             photoGalleryFragment.updateItems("");
             return true;
